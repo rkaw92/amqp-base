@@ -1,0 +1,19 @@
+{
+  "name": "listeners",
+  "version": "0.1.0",
+  "description": "A library for creating very reliable AMQP subscribers and publishers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Robert Kawecki <robert+npm@rkaw.pl>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rkaw92/amqp-base.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "amqplib": "^0.3.2",
+    "when": "^3.7.2"
+  }
+}
