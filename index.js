@@ -1,3 +1,7 @@
+/**
+ * @module AMQPBase
+ */
+
 module.exports.AMQPConnector = require('./lib/AMQPConnector');
 module.exports.AMQPConsumer = require('./lib/AMQPConsumer');
 module.exports.AMQPChannelManager = require('./lib/AMQPChannelManager');
