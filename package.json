@@ -13,7 +13,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "amqplib": "^0.3.2",
+    "amqplib": "^0.5.5",
     "when": "^3.7.2"
   }
 }
