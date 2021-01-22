@@ -1,5 +1,4 @@
 import { Connection } from "amqplib";
-import { TcpSocketConnectOpts } from "net";
 import { AsyncEventEmitter } from "./AsyncEventEmitter";
 import * as amqplib from "amqplib";
 
@@ -23,7 +22,20 @@ interface AMQPConnectorState {
     destroy: DestroyCallback | null;
 };
 
-class AMQPConnector extends AsyncEventEmitter {
+interface EmitterOf<EventType extends string, ListenerArgs extends Array<any>> {
+    on(event: EventType, listener: (...args: ListenerArgs) => void): void;
+    once(event: EventType, listener: (...args: ListenerArgs) => void): void;
+    off(event: EventType, listener: (...args: ListenerArgs) => void): void;
+}
+
+interface AMQPConnectorEmitter extends EmitterOf<"connect",[ connection: Connection ]> {}
+
+export interface IAMQPConnector extends AMQPConnectorEmitter {
+    start(): void;
+    stop(): void;
+}
+
+class AMQPConnector extends AsyncEventEmitter implements IAMQPConnector {
     private _serverURIs: ServerURI[];
     private _options: AMQPConnectorOptions;
     private _state: AMQPConnectorState;
