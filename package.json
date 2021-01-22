@@ -4,7 +4,7 @@
   "description": "A library for creating very reliable AMQP subscribers and publishers",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -r ts-node/register --extension=.test.ts src/test"
   },
   "author": "Robert Kawecki <robert+npm@rkaw.pl>",
   "repository": {
@@ -15,5 +15,13 @@
   "dependencies": {
     "amqplib": "^0.5.5",
     "when": "^3.7.2"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.5.17",
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^14.14.22",
+    "mocha": "^8.2.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3"
   }
 }
