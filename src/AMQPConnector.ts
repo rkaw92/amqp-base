@@ -1,6 +1,7 @@
 import { Connection } from "amqplib";
 import { AsyncEventEmitter } from "./AsyncEventEmitter";
 import * as amqplib from "amqplib";
+import { EmitterOf } from "./EmitterOf";
 
 type ServerURI = string;
 
@@ -21,12 +22,6 @@ interface AMQPConnectorState {
     reconnectTimeout: NodeJS.Timeout | null;
     destroy: DestroyCallback | null;
 };
-
-interface EmitterOf<EventType extends string, ListenerArgs extends Array<any>> {
-    on(event: EventType, listener: (...args: ListenerArgs) => void): void;
-    once(event: EventType, listener: (...args: ListenerArgs) => void): void;
-    off(event: EventType, listener: (...args: ListenerArgs) => void): void;
-}
 
 interface AMQPConnectorEmitter extends EmitterOf<"connect",[ connection: Connection ]> {}
 
