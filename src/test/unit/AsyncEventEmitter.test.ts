@@ -1,4 +1,4 @@
-import { AsyncEventEmitter } from "../AsyncEventEmitter";
+import { AsyncEventEmitter } from "../../AsyncEventEmitter";
 import * as assert from "assert";
 
 describe('AsyncEventEmitter', function() {
