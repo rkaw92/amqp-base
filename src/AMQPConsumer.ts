@@ -27,6 +27,33 @@ export interface AMQPConsumerOptions {
     binds?: Binding[];
 };
 
+/**
+ * An instance of AMQPConsumer controls a single subscription on a single queue.
+ * This corresponds 1:1 to an AMQP consumer, since only a single consumer tag is held at a time.
+ * Upon starting, the consumer attempts to declare all the required objects on the broker - at least the queue, plus the exchange(s) and bind(s), if any were specified.
+ * Any failures or conflicting declarations at creation will take down the entire channel, so an upper layer must detect this condition and re-create the consumer.
+ * For this reason, direct use of the AMQPConsumer is discouraged. An {@link module:AMQPBase.AMQPListener|AMQPListener} handles this channel re-instatement automatically and reconstructs the consumers as requested.
+ * @constructor
+ * @memberof module:AMQPBase
+ * @extends EventEmitter
+ *
+ * @param {external:AMQPChannel} channel The channel which the consumer shall use. The channel must be open - attempts to use a channel that is closed will result in failure.
+ * @param {string} queueName Name of the queue that this consumer shall consume from.
+ * @param {Object} [options] Settings controlling the behaviour of the consumer. All but the most trivial consumers will want to use this.
+ *
+ * @param {Object} [options.queue] Queue options, controlling the properties of the queue when declaring it on the broker.
+ * @param {boolean} [options.queue.durable=true] Whether the queue should be declared as durable (true) or transient (false).
+ * @param {boolean} [options.queue.exclusive=false] Whether this queue is exclusive to the channel.
+ * @param {boolean} [options.queue.autoDelete=false] Whether the queue should be deleted when the channel is closed.
+ *
+ * @param {Object} [options.consume] Consumption options, which can alter the behaviour of the consumption process itself.
+ * @param {boolean} [options.consume.exclusive=false] Whether the consumption process should acquire an exclusive lock on the queue, preventing other consumers from using it at the same time.
+ * @param {boolean} [options.consume.prefetch=0] A limit of how many unacked (outstanding) messages the consumer may hold at any given time. Zero means no limit. Note that, on RabbitMQ before version 3.3.0, it applies per-channel, not per-consumer, so the limit is shared between multiple consumers.
+ *
+ * @param {module:AMQPBase.AMQPConsumer~Exchange[]} [options.exchanges] Definitions of exchanges that should be declared at the broker's side before starting consumption.
+ *
+ * @param {module:AMQPBase.AMQPConsumer~Binding[]} [options.binds] Queue bindings that should be established prior to consuming messages.
+ */
 class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
     private _channel: Channel | ConfirmChannel;
     private _queueName: string;
@@ -35,7 +62,6 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
     private _consumeOptions: Partial<ConsumeOptions>;
     private _exchanges: Exchange[];
     private _binds: Binding[];
-    // TODO: Vanquish the unknowns!
     private _consumerTag: string | null;
     private _started: boolean;
     private _consumePromise: Promise<void> | null;
@@ -144,6 +170,11 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
         return this._consumePromise!;
     }
 
+    /**
+     * Stop consuming messages from the designated queue. If the queue is an autoDelete queue, it may still not be deleted after this completes, as long as the channel remains open.
+     * Subsequent calls to this method are de-duplicated and return the same promise.
+     * @returns a promise which fulfills when the consumption has stopped (i.e. no new messages can be emitted as events) and rejects if the cancellation has failed.
+     */
     stopConsuming(): Promise<void> {
         var self = this;
         var currentConsumerTag = self._consumerTag;
@@ -170,6 +201,9 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
         return self._stopPromise;
     }
 
+    /**
+     * Check whether the consumer is in the process of stopping consumption.
+     */
     isStopping() {
         return (this._stopPromise !== null);
     }
