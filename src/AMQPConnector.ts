@@ -5,11 +5,11 @@ import { EmitterOf } from "./EmitterOf";
 
 type ServerURI = string;
 
-interface AMQPConnectorOptions {
+export interface AMQPConnectorOptions {
     socket?: {
         noDelay?: boolean;
     }
-}
+};
 
 type DestroyCallback = () => void;
 type LogCallback = (occurrence: any) => void;

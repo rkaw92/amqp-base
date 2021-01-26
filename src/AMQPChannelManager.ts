@@ -17,10 +17,10 @@ type AMQPChannelManagerEmitter<ChannelType extends ChannelWithOrWithoutConfirms>
     EmitterOf<"create",[ channel: ChannelType ]> &
     EmitterOf<"close",[ channel: ChannelType ]>;
 
-interface IAMQPChannelManager<ChannelType extends ChannelWithOrWithoutConfirms> extends AMQPChannelManagerEmitter<ChannelType> {
+export interface IAMQPChannelManager<ChannelType extends ChannelWithOrWithoutConfirms> extends AMQPChannelManagerEmitter<ChannelType> {
     start(): void;
     stop(): void;
-}
+};
 
 export type IAMQPChannelManagerNoConfirms = IAMQPChannelManager<Channel>;
 export type IAMQPChannelManagerWithConfirms = IAMQPChannelManager<ConfirmChannel>;
