@@ -107,7 +107,7 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
         // Note: below, we fire off two AMQP RPCs one after another within our channel, so that we can make sure they are executed without any interleaving.
         // This is to ensure that our prefetch() setting, if any, will not have been overridden in the meantime (by, for example, establishConsumer() call entries from other consumers).
         // Within the channel scope, the basic.qos (prefetch) must take place first, because RPCs are synchronous (non-pipelined) in AMQP 0-9-1.
-        var consumptionPromises = [];
+        var consumptionPromises: Array<Promise<any>> = [];
 
         if (consumeOptions.prefetch) {
             consumptionPromises.push(channel.prefetch(consumeOptions.prefetch));
