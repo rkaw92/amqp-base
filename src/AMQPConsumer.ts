@@ -91,6 +91,7 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
         const binds = this._binds;
         const emitAsync = this.emitAsync.bind(this);
         const self = this;
+        self._started = true;
 
         // First, we need to make sure that our queue exists:
         const queueInfo = await channel.assertQueue(queueName, queueOptions);
@@ -150,7 +151,7 @@ class AMQPConsumer extends AsyncEventEmitter implements IAMQPConsumer {
             var consumerTag = consumeResult.consumerTag;
             self._consumerTag = consumerTag;
         }));
-        self._started = true;
+        return Promise.all(consumptionPromises).then(() => undefined);
     }
 
     /**
