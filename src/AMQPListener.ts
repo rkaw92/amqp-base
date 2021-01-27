@@ -24,7 +24,7 @@ type DestroyCallback = () => void;
 /**
  * A Listener groups several Consumers together and coordinates the starting and stopping of their consumption.
  */
-class AMQPListener {
+class AMQPListener implements IAMQPListener {
     private _connection: Connection;
     private _channelManager: IAMQPChannelManagerNoConfirms;
     private _consumerConstructors: ConsumerConstructorOrFactory[];
@@ -48,13 +48,13 @@ class AMQPListener {
         var self = this;
         
         if (self._started) {
-            return;
+            return Promise.resolve();
         }
         
         self._started = true;
         self._channelManager.start();
         
-        return new Promise(function(resolve, reject) {
+        return new Promise<void>(function(resolve, reject) {
             function channelCreated(channel: ChannelType) {
                 self._consumers = [];
                 var consumePromises: Promise<void>[] = [];
@@ -73,7 +73,7 @@ class AMQPListener {
                     });
                 });
                 
-                Promise.all(consumePromises).then(resolve, function handleConsumerFailure(error) {
+                Promise.all(consumePromises).then(() => resolve, function handleConsumerFailure(error) {
                     // We explicitly choose to do nothing - this is already going to be handled by the channel manager.
                     // Namely, when the channel is re-created due to the error which caused the consumer failure, the channelCreated function is going to be called.
                 });
