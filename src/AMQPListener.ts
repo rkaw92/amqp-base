@@ -73,7 +73,7 @@ class AMQPListener implements IAMQPListener {
                     });
                 });
                 
-                Promise.all(consumePromises).then(() => resolve, function handleConsumerFailure(error) {
+                Promise.all(consumePromises).then(() => resolve(), function handleConsumerFailure(error) {
                     // We explicitly choose to do nothing - this is already going to be handled by the channel manager.
                     // Namely, when the channel is re-created due to the error which caused the consumer failure, the channelCreated function is going to be called.
                 });
