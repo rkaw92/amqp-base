@@ -58,6 +58,14 @@ class AMQPConnector extends AsyncEventEmitter implements IAMQPConnector {
         this._log = function log(occurrence) {
             console.log('[%s] AMQPConnector:', (new Date()).toISOString(), occurrence);
         };
+
+        const self = this;
+        // Hand out existing connections if a listener registers after we've connected:
+        this.on('newListener', function(event, listener) {
+            if (event === 'connect' && self._state.connection) {
+                listener(self._state.connection!);
+            }
+        });
     }
 
     private _selectServerURI(lastUsedURI: ServerURI | null) {
