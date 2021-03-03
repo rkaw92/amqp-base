@@ -98,7 +98,7 @@ class AMQPConnector extends AsyncEventEmitter implements IAMQPConnector {
         state.connecting = true;
         try {
             // TODO: Refactor: inject the amqplib instance to allow replacing with a test double.
-            const connection = await amqplib.connect(URI, self._options);
+            const connection = await amqplib.connect(URI, self._options.socket);
             var connectionDropped = false;
             var connectionDestroyed = false;
             state.connection = connection;
