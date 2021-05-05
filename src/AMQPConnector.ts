@@ -38,6 +38,7 @@ class AMQPConnector extends AsyncEventEmitter implements IAMQPConnector {
 
     constructor(serverURI: ServerURI | ServerURI[], options?: AMQPConnectorOptions) {
         super();
+        this.setMaxListeners(0);
 
         // Initial settings:
         this._serverURIs = (Array.isArray(serverURI)) ? serverURI.slice() : [ serverURI ];
@@ -99,6 +100,7 @@ class AMQPConnector extends AsyncEventEmitter implements IAMQPConnector {
         try {
             // TODO: Refactor: inject the amqplib instance to allow replacing with a test double.
             const connection = await amqplib.connect(URI, self._options.socket);
+            connection.setMaxListeners(0);
             var connectionDropped = false;
             var connectionDestroyed = false;
             state.connection = connection;
